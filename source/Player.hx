@@ -1,3 +1,6 @@
+// Player.hx
+// Matt Grant(teamuba@gmail.com)
+
 package;
 
 import flixel.FlxObject;
@@ -12,6 +15,8 @@ class Player extends FlxSprite{
     private var speed    : Float = 200;
     private var jTime    : Float = 0;
     private var jMax     : Float = .2;
+    private var jCount   : Float = 0;
+    private var jCountMax: Float = 2;
     public var onGround  : Bool  = true;
 
     public function new(?X:Float=0, ?Y:Float=0){
@@ -24,9 +29,10 @@ class Player extends FlxSprite{
         ////// Animation
         setFacingFlip(FlxObject.LEFT,  true, false);
         setFacingFlip(FlxObject.RIGHT, false, false);
-        animation.add("lr", [1, 2, 3, 4], 4, false);
-        animation.add("i",  [1], 1, false);
-        animation.add("p",  [5], 4, false);
+        animation.add("lr", [0, 1, 2, 3], 8, false);
+        animation.add("i",  [0], 1, false);
+        animation.add("u",  [5], 4, false);
+        animation.add("d",  [6], 4, false);
         ////// Movement
         drag.x = drag.y = 1600;
 
@@ -36,28 +42,25 @@ class Player extends FlxSprite{
         super.update(elapsed);
         if(onGround){
             jTime = 0;
+            jCount = 0;
         }
         pAnimation(movement(elapsed));
     }
-    // TODO
-    // Jump stops 1 frame above ground
-    // Collision callback
-    // Idle frame offset
-    // Jump mechanics( ya function?, 2x, wall jump?)
-    // Tune vars
 
     private function pAnimation(move : Pmove) : Void{
-        if((velocity.x != 0 || velocity.y != 0) &&
-        touching == FlxObject.NONE){
+        //if((velocity.x != 0 || velocity.y != 0) &&
+        //touching == FlxObject.NONE){
             switch(move){
                 case Left, Right:
                     if(onGround){ animation.play("lr"); }
-                case Jump:
-                    if(onGround){ animation.play("p"); }
                 default:
-                    if(onGround){ animation.play("i"); }
+                    if(!onGround){
+                        if(velocity.y < -0.5){ animation.play("u"); }
+                        else                 { animation.play("d"); }
+                    }
+                    else { animation.play("i"); }
             }
-        }
+        //}
     }
 
     private function movement(elapsed : Float) : Pmove {
@@ -67,10 +70,12 @@ class Player extends FlxSprite{
         var down  : Bool = false;
         var left  : Bool = false;
         var right : Bool = false;
+        var jrel  : Bool = false;
         up    = FlxG.keys.anyPressed([SPACE, UP, W]);
         down  = FlxG.keys.anyPressed([DOWN,  S]);
         left  = FlxG.keys.anyPressed([LEFT,  A]);
         right = FlxG.keys.anyPressed([RIGHT, D]);
+        jrel  = FlxG.keys.anyJustReleased([SPACE, UP, W]);
 
         if(up && down){
             up = down = false;
@@ -79,6 +84,10 @@ class Player extends FlxSprite{
         if(left && right){
             left = right = false;
             return toReturn;
+        }
+        if(jrel && !onGround){
+            jCount++;
+            jTime = 0;
         }
 
         ////// Handle movement
@@ -97,7 +106,7 @@ class Player extends FlxSprite{
                 velocity.x = xa * speed;
                 toReturn = Right;
             }
-            if(up){
+            if(up && jCount < jCountMax){
                 if(!onGround){
                     jTime += elapsed;
                 }

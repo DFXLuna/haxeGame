@@ -1,3 +1,6 @@
+// Main.hx
+// Matt Grant(teamuba@gmail.com)
+
 package;
 
 import flixel.FlxGame;

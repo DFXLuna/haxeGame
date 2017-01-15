@@ -1,3 +1,6 @@
+// MenuState.hx
+// Matt Grant(teamuba@gmail.com)
+
 package;
 
 import flixel.FlxG;
@@ -12,8 +15,6 @@ class MenuState extends FlxState{
     ////// Buttons
     private var play : FlxUIButton;
     private var opt  : FlxUIButton;
-
-
 
 	override public function create() : Void{
         ////// Sizes

@@ -1,3 +1,6 @@
+// PlayState.hx
+// Matt Grant(teamuba@gmail.com)
+
 package;
 
 import flixel.FlxG;
@@ -65,14 +68,13 @@ class PlayState extends FlxState{
     }
 
 	override public function update(elapsed:Float) : Void{
+        // Temporary fail state
         if(player.y > 480){ FlxG.switchState(new PlayState()); }
 
         super.update(elapsed);
         gravity();
         player.onGround = false;
         if(FlxG.collide(floor, player)){ player.onGround = true; }
-
-
 	}
 
     public function gravity(){

@@ -1,0 +1,9 @@
+// MenuNotes.txt
+// Matt Grant(Teamuba@gmail.com)
+
+TODO
+-FPS changer
+-Collision callback?
+-grav interface?
+-Jump mechanics( ya function?, wall jump?)
+-Tune player movement vars
